@@ -1,0 +1,8 @@
+5
+fiebre, FC=0.6
+tosSeca, FC=-1
+somnolencia, FC=1
+dolorMusc, FC=0.5
+contEnf, FC=-1
+Objetivo
+gripe

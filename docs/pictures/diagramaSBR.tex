@@ -1,0 +1,23 @@
+\begin{tikzpicture}[
+	node distance=2cm and 2.5cm,
+	box/.style={draw, fill=gray!20, rounded corners, minimum height=2cm, minimum width=2cm, align=center},
+	database/.style={cylinder, cylinder uses custom fill, cylinder body fill=gray!20, cylinder end fill=gray!10, shape border rotate=90, draw, minimum height=1.5cm, minimum width=1.5cm, aspect=0.55},
+	rect/.style={draw, fill=gray!20, minimum height=1.5cm, minimum width=10cm, align=center},
+	line/.style={Stealth-, thick, double, double distance=2.5pt},
+	doublearrow/.style={
+		double arrow, draw=black, minimum width=7mm, minimum height=15mm, inner sep=1.75mm, single arrow head extend=1mm, double arrow head extend=1mm, fill=gray!5
+	}]
+	
+	% Nodos principales
+	\node[database] (BH) {BH}; % Base de Hechos
+	\node[box, right=of BH] (Motor) {Motor\\Inferencia}; % Motor de Inferencia
+	\node[database, right=of Motor] (BC) {BC}; % Base de Conocimiento
+	\node[rect, below=of Motor, yshift=1 cm] (Interfaz) {Interfaz}; % Interfaz
+	
+	% Flechas entre componentes
+	\draw[line] (BH) -- (Motor);
+	\draw[line] (BC) -- (Motor);
+	\path (Motor.south) -- (Interfaz.north) node[doublearrow,yshift=0.45cm, rotate=90] {};
+	\path (BH.south) -- ++(0,-1.5) node[doublearrow, minimum height=20mm, yshift=0.75cm, rotate=90] {}; 
+	\path (BC.south) -- ++(0,-1.5) node[doublearrow, minimum height=20mm, yshift=0.75cm, rotate=90] {};
+\end{tikzpicture}

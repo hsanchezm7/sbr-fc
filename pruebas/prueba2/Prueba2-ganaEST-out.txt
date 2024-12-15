@@ -1,0 +1,22 @@
+=============================================
+          SISTEMA BASADO EN REGLAS       
+=============================================
+
+Base de conocimiento:                BC-2.txt
+---------------------------------------------
+Base de hechos:              BH-2-ganaEST.txt
+---------------------------------------------
+Meta:                                 ganaEST
+
+=============================================
+
+R1: 
+	Caso 3: ganaEST, FC=0.4
+R4: 
+	Caso 3: ganaEST, FC=-0.1925
+R6: 
+	Caso 3: ganaEST, FC=-0.6
+Caso 2: ganaEST, FC=0.256966
+Caso 2: ganaEST, FC=-0.461667
+
+ganaEST, FC=-0.461667

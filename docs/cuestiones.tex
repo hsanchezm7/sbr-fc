@@ -1,0 +1,202 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Prácticas Sistemas Inteligentes
+%
+% Author:
+% Hugo Sánchez
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper,11pt, includehead]{article}
+\include{style} % import style and config
+\renewcommand{\headrulewidth}{0.4pt}
+
+\title{
+	\vspace{-5ex}
+	{\large \textsc{\subject}}\\[1ex]
+	\hrule
+	\vspace{3ex}
+	{\huge \textsc{\underline{Sistemas Basados en Reglas: Cuestiones}}}\\[2ex]
+	{\small Hugo Sánchez Martínez\\[-2ex]
+	\texttt{hugo.s.m@um.es}} % Author and email address
+	
+	\vspace{2ex}
+	\hrule
+	\vspace{2ex}
+	{\normalsize \textsc{Facultad de Informática - Universidad de Murcia}\\[-1ex] Diciembre 2024}
+	}
+
+\date{} % University, school and/or department name(s) and a date
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+	
+\maketitle % Print the title
+
+\pagestyle{fancy}
+
+\fancyhf{} % clear existing header/footer
+\fancyhead[L]{H. Sánchez}
+\fancyhead[R]{\textit{SBR: CUESTIONES}}
+\fancyfoot[R]{\thepage}
+\setlength{\headsep}{4ex}
+
+\setcounter{page}{1}
+
+\noindent {\large \textbf{1.- Explicación breve de los tres elementos de los que consta un Sistema basado en Reglas (SBR).}}\\
+
+Un \textbf{Sistema Basado en Reglas} (\textbf{SBR}) es un tipo de sistema experto\footnote{Los \textit{sistemas expertos} modelan el comportamiento y el razonamiento del ser humano} que toma decisiones en base a un conjunto de reglas predefinidas. Un SBR está compuesto, principalmente, por tres elementos: 
+\begin{itemize}
+	\item Un \textbf{conjunto de reglas} que definen la \textbf{base de conocimiento} (\textbf{BC}).
+	\item Una \textbf{base de hechos} (\textbf{BH}), que contiene tanto datos de entrada introducidos por el usuario, como hechos inferidos durante el proceso.
+	\item Un mecanismo apropiado de interpretación de las reglas, llamado \textbf{motor de inferencia}, que se encarga de la selección y ejecución de las mismas.
+\end{itemize}
+
+\vspace{2ex}
+
+\begin{figure}[h]
+	\centering
+	\scalebox{0.9}{\input{pictures/diagramaSBR.tex}}
+	\caption{Diagrama de un SBR}
+	\label{fig:diagramaSBR}
+\end{figure}
+
+\vspace{2ex}
+
+Es importante distinguir la diferencia entre las BCs y las BHs. Mientras las reglas que forman la base del conocimiento tienen un carácter \textbf{estático} y están basadas en criterios \textbf{simples} preespecificados, las bases de hechos se comportan de forma \textbf{dinámica}, basándose en el contexto o el tiempo, son modificables y están basadas en mecanismos de aprendizaje.\cite{udg_arl4_8}\\
+
+El motor de inferencia obtiene conclusiones en tiempo de ejecución aplicando las reglas de inferencia que el usuario le proporciona.\\
+
+Una \textbf{regla de inferencia} no es más que una proposición lógica que relaciona dos o más objetos del dominio e incluye dos partes, la \textbf{premisa} y la \textbf{conclusión}, que se suele escribir normalmente como "\textit{Si} premisa, \textit{entonces} conclusión"\ (regla \textit{modus ponens}). Cada una de estas partes es una expresión lógica con una o más afirmaciones objeto-valor conectadas mediante operadores lógicos (\textit{y}, \textit{o}, o \textit{no}).\cite{durkin1994}\\
+
+Los SBR pueden adoptar las dos formas de razonamiento computacional: \textbf{encadenamiento hacia delante} y \textbf{encadenamiento hacia atrás}. En esta práctica, emplearemos el segundo.\\
+
+Un gran ejemplo de un sistema experto basado en reglas es \textbf{MYCIN}. Como uno de los primeros SE de la historia, era capaz de identificar las bacterias que causaban la infección en los pacientes y sugería los antibióticos y las dosis adecuadas para el peso de cada uno. MYCIN resultó muy útil para los médicos aún novatos, pues lograba una tasa de acierto del 65 \%. Sin embargo, los médicos expertos en el campo eran capaces de lograr un 80 \%, y el proyecto fracasó, entre otros motivos, por principios éticos, como el de dejar el diagnóstico de una enfermedad a manos de una máquina.\cite{shortliffe1984}\\
+
+\vspace{2ex}
+
+\noindent {\large \textbf{2.- Explicación breve de cómo se representa el conocimiento incierto mediante Factores de Certeza.}}\\
+
+La importancia de MYCIN, el SE del que acabamos de hablar, radica en que fue el primer SE en introducir \textbf{factores de certeza} (\textbf{FC}). Sus desarrolladores se dieron cuenta de que, al ser un SE médico y no disponer de datos estadísticos confiables sobre el dominio, necesitabam expresar la fuerza de su creencia en términos que no eran lógicos, usando un enfoque distinto al de la probabilidad clásica.\cite{negnevitsky2005} Por ello, definieron los factores de confianza como valores para medir la confianza del sistema.\\
+
+\noindent La certeza de una evidencia se divide en dos componentes:
+
+\begin{itemize}
+	\item $MC(h, e)$: medida de la creencia en la hipótesis $h$, dada la evidencia $e$.
+	\item $MI(h, e)$: medida de la incredulidad en la hipótesis $h$, dada la evidencia $e$.
+\end{itemize}
+donde:
+
+$$0\geq MC(h,e) \leq 1$$
+$$0\geq MI(h,e) \leq 1$$
+
+\noindent Por tanto:
+
+$$FC(h,e)=MC(h,e)-MI(h,e)$$
+$$ -1.0 \leq FC \leq +1.0 $$
+
+Es decir, el factor de certeza de una hipótesis $h$ dada la evidencia $e$ es igual a la diferencia entre la medida de certeza $MC(h,e)$ y el valor de incertidumbre $MI(h,e)$.\\
+
+\noindent En un SBR, los factores de certeza se \textbf{propagan} y \textbf{combinan} usando distintas reglas, para dar un valor de certeza de una hipótesis final (meta). Se distinguen 3 casos:
+
+\begin{itemize}
+	\item \textbf{CASO 1: Combinación de antecedentes.}
+	Es necesario combinar las piezas de evidencia $e_1$ y $e_2$, que afectan al factor de certeza de $h$.  
+	$$
+	\left\{ 
+	\begin{array}{l}
+		\text{FC}(h, e_1 \land e_2) = \min\{\text{FC}(h, e_1), \text{FC}(h, e_2)\} \cr
+		\text{FC}(h, e_1 \lor e_2) = \max\{\text{FC}(h, e_1), \text{FC}(h, e_2)\}
+	\end{array} 
+	\right.
+	$$
+	\vspace{1ex}
+	\item \textbf{CASO 2: Adquisición incremental de evidencia.} Se combinan dos piezas de evidencia, $e_1$ y $e_2$, que afectan al factor de certeza de una misma hipótesis.
+	$$\text{FC}(h, e_1\land e_2)=
+	\left\{ 
+	\begin{array}{lr}
+	\text{FC}(h, e_1) + \text{FC}(h, e_2) \cdot (1 - \text{FC}(h, e_1)) & \text{si } \text{FC}(h, e_1), \text{FC}(h, e_2) \geq 0 \\[1ex]
+	\text{FC}(h, e_1) + \text{FC}(h, e_2) \cdot (1 + \text{FC}(h, e_1)) & \text{si } \text{FC}(h, e_1), \text{FC}(h, e_2) \leq 0 \\[1ex]
+	\dfrac{\text{FC}(h, e_1) + \text{FC}(h, e_2)}{1 - \min\{ |\text{FC}(h, e_1)|, |\text{FC}(h, e_2)| \}} & 
+	\begin{array}{l}
+		\text{si } \text{FC}(h, e_1), \text{FC}(h, e_2)  \\
+		\text{ tienen signo opuesto.}
+		\end{array}
+	\end{array}
+	\right.
+	$$
+	\vspace{1ex}
+	\item \textbf{CASO 3: Encadenamiento de evidencia.} Se combinan dos reglas, de forma que, el resultado	de una regla es la entrada de otra.
+	$$
+	\text{FC}(h, e) = \text{FC}(h, s) \cdot \max\{0, \text{FC}(s, e)\}
+	$$
+	Este tercer caso es una variación del primer caso, pero como sólo disponemos de una evidencia, simulamos la entrada de una \textit{evidencia nula}, con $\text{FC}=\varnothing$.
+\end{itemize}
+
+\vspace{2ex}
+
+\noindent {\large \textbf{3.- ¿Qué es lo que mide un factor de certeza FC asociado a un hecho A?}}\\
+
+El factor de asociado a un hecho A es el \textbf{grado de credibilidad} con el que opera el sistema experto (en este caso el motor de inferencia) para dicho hecho. Como se ha explicado, es un valor numérico, que indica la seguridad de la veracidad del hecho basándose en el conocimiento disponible.\\
+
+\vspace{2ex}
+
+\noindent {\large \textbf{4. ¿Qué es lo que dirías sobre “culpable” con la siguiente información?}}\\
+
+\textbf{a) Hemos obtenido en un proceso de inferencia el hecho “culpable” con FC=0.9}\\
+\indent Podemos afirmar con gran seguridad que el hecho “culpable” es verídico.\\
+
+\textbf{b) Hemos obtenido en un proceso de inferencia el hecho “culpable” con FC=0}\\
+\indent No podemos afirmar que el hecho “culpable” sea cierto.\\
+
+\textbf{c) Hemos obtenido en un proceso de inferencia el hecho “culpable” con FC=-0.1}\\
+\indent Es muy poco probable que el hecho $\neg$ “culpable” sea cierto.\\
+
+\vspace{2ex}
+
+\noindent {\large \textbf{5.- ¿Para qué se necesita utilizar el CASO 2 durante el proceso de inferencia?}}\\
+
+El CASO 2 se aplica cuando tenemos dos hechos que desencandenan en el mismo objetivo. El factor de certeza de dicho objetivo dependerá de los factores de certeza de ambas evidencias, es decir, hay una \textbf{adquisición incremental de evidencia}. Ejemplo:\\[2ex]
+
+\begin{center}
+\scalebox{1}{
+\begin{tikzpicture}[
+	node distance=2cm and 1cm,
+	box/.style={draw, fill=blue!20, rounded corners, minimum height=1cm, minimum width=1cm, align=center},
+	line/.style={-Stealth, thick}
+	]
+	
+	% Nodos principales
+	\node[box] (R1) {$R_1$};
+	\node[box, right=of R1, xshift=0cm] (R2) {$R_2$};
+	
+	
+	% Output
+	\node[below=of R1, yshift=0.5cm] (C) at ($(R1)!0.5!(R2)$) {C};
+	
+	% Inputs
+	\node[above=0.75cm of R1, align=center] (A) {A};
+	\node[above=0.75cm of R2, align=center] (B) {B};
+	\node[right=2cm of R2, align=center] () {$R_1: A\rightarrow C$\\ $R_2: B\rightarrow C$};
+	
+	
+	
+	\draw[line] (A) -- (R1);
+	\draw[line] (B) -- (R2);
+	\draw[line] (R1) -- (C);
+	\draw[line] (R2) -- (C);
+\end{tikzpicture}
+}
+\end{center}
+
+\clearpage
+
+\noindent {\large \textbf{6.- Disponemos de una BC compuesta de un conjunto de reglas R\textsubscript{i} las cuales utilizan 4 hechos (A, B, C, D). Si para un proceso de inferencia nos proporcionan FCs de los hechos A, C y D, ¿Qué debemos hacer con el hecho B? ¿Por qué? Si lo utilizamos, ¿qué FC se le asignaría? ¿Por qué?}}\\
+
+No conocemos el factor de certeza del hecho B, ni tenemos conocimientos  sobre su comportamiento. Si no influte en el proceso de inferencia, no deberíamos incluirlo en la base de hechos. Si en el proceso de inferencia infiere dicho hecho, ha de hacerlo con un factor de certeza de 0, pues no podemos asegurar nada sobre él.
+
+
+\bibliographystyle{unsrt}
+\bibliography{bibliography}
+
+\end{document}
+

@@ -1,0 +1,23 @@
+=============================================
+          SISTEMA BASADO EN REGLAS       
+=============================================
+
+Base de conocimiento:                BC-2.txt
+---------------------------------------------
+Base de hechos:               BH-2-ganaRM.txt
+---------------------------------------------
+Meta:                                  ganaRM
+
+=============================================
+
+R2: 
+	Caso 3: ganaRM, FC=0.75
+R3: 
+	Caso 3: ganaRM, FC=-0.26
+R5: 
+	Caso 1: les2pivRM y visitanteRM, FC=1
+	Caso 3: ganaRM, FC=-0.1
+Caso 2: ganaRM, FC=0.662162
+Caso 2: ganaRM, FC=0.624625
+
+ganaRM, FC=0.624625

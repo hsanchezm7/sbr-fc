@@ -1,0 +1,28 @@
+=============================================
+          SISTEMA BASADO EN REGLAS       
+=============================================
+
+Base de conocimiento:                BC-A.txt
+---------------------------------------------
+Base de hechos:                BH-A-gripe.txt
+---------------------------------------------
+Meta:                                   gripe
+
+=============================================
+
+R1: 
+	Caso 1: fiebre y tosSeca, FC=-1
+	Caso 3: faringitis, FC=0
+R2: 
+	Caso 1: faringitis o contEnf, FC=0
+	Caso 3: gripe, FC=0
+R3: 
+	Caso 3: fatiga, FC=0.7
+R4: 
+	Caso 3: fatiga, FC=0.25
+Caso 2: fatiga, FC=0.775
+R5: 
+	Caso 3: gripe, FC=0.2325
+Caso 2: gripe, FC=0.2325
+
+gripe, FC=0.2325

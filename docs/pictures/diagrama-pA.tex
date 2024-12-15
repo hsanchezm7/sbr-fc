@@ -1,0 +1,69 @@
+
+\begin{tikzpicture}[
+	node distance=2cm and 2cm,
+	box/.style={draw, fill=gray!20, rounded corners, minimum height=1.2cm, minimum width=1.2cm, align=center},
+	line/.style={-Stealth, thick}
+]
+
+% Nodos principales
+\node[box] (R1) {$R_1$};
+
+\node[above=1.5cm of R1, xshift=-1cm, align=center] (fiebre) {0.6\\[0.5ex] fiebre};
+\node[above=1.5cm of R1, xshift=1cm, align=center] (tosSeca) {-1\\[0.5ex] tosSeca};
+
+\node[below=of R1, align=center] (faringitis) {faringitis};
+\node[right=of faringitis, yshift=0.5cm, align=center] (contEnf) {-1\\[0.5ex] contEnf};
+
+\node[box, below=of R1] (R2) at ($(faringitis)!0.5!(contEnf)$) {$R_2$};
+
+\node[box, right=5cm of R2] (R5) {$R_5$};
+
+\node[below=of R2, yshift=-0.5cm] (gripe) at ($(R2)!0.5!(R5)$) {gripe};
+
+\node[above=of R5, align=center] (fatiga) {fatiga};
+
+\node[box, above=1.5cm of fatiga, xshift=-1.5cm, align=center] (R3) {$R_3$};
+\node[box, above=1.5cm of fatiga, xshift=1.5cm, align=center] (R4) {$R_4$};
+
+\node[above=1.5cm of R3, align=center] (somnolencia) {1\\[0.5ex] somnolencia};
+\node[above=1.5cm of R4, align=center] (dolorMusc) {0.5\\[0.5ex] dolorMusc};
+
+\node[right=0cm of R1] {\small FC=$0.99$};
+\node[right=0cm of R2] {\small FC=$0.75$};
+\node[right=0cm of R3] {\small FC=$0.7$};
+\node[right=0cm of R4] {\small FC=$0.5$};
+\node[right=0cm of R5] {\small FC=$0.3$};
+
+\node[below=0.25cm of R1, xshift=0.4cm] {\small \textcolor{darkgreen}{$0$}};
+\node[below=0.25cm of R2, xshift=0.3cm] {\small \textcolor{darkgreen}{$0$}};
+\node[below=0.25cm of R3, xshift=0.1cm] {\small \textcolor{darkgreen}{$0.7$}};
+\node[below=0.25cm of R4, xshift=-0.15cm] {\small \textcolor{darkgreen}{$0.25$}};
+\node[below=0.25cm of R5, xshift=-0.15cm] {\small \textcolor{darkgreen}{$0.2325$}};
+\node[below=0.25cm of fatiga, xshift=-0.8cm] {\small \textcolor{darkgreen}{$0.775$}};
+\node[above=0.2cm of R1] {\small \textcolor{darkgreen}{$-1$}};
+\node[above=0.2cm of R2] {\small \textcolor{darkgreen}{$0$}};
+\node[below=0.25cm of gripe] {\small \textcolor{darkred}{$0.2325$}};
+\draw[black] (R1) ++(1.05cm, 1.25cm) arc[start angle=45, end angle=135, radius=1.5cm];
+
+\draw[line] (fiebre) -- (R1);
+\draw[line] (tosSeca) -- (R1);
+
+\draw[line] (R1) -- (faringitis);
+
+\draw[line] (faringitis) -- (R2);
+\draw[line] (contEnf) -- (R2);
+
+\draw[line] (R2) -- (gripe);
+\draw[line] (R5) -- (gripe);
+
+\draw[line] (fatiga) -- (R5);
+
+\draw[line] (R3) -- (fatiga);
+\draw[line] (R4) -- (fatiga);
+
+\draw[line] (somnolencia) -- (R3);
+\draw[line] (dolorMusc) -- (R4);
+
+
+\end{tikzpicture}
+

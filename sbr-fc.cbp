@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="sbr-fc" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/sbr-fc" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/sbr-fc" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add option="-std=c++17" />
+			<Add option="-static" />
+			<Add directory="include" />
+		</Compiler>
+		<Unit filename="include/BaseConocimiento.h" />
+		<Unit filename="include/BaseHechos.h" />
+		<Unit filename="include/Hecho.h" />
+		<Unit filename="include/MotorInferencia.h" />
+		<Unit filename="include/Regla.h" />
+		<Unit filename="include/Utils.h" />
+		<Unit filename="src/BaseConocimiento.cpp" />
+		<Unit filename="src/BaseHechos.cpp" />
+		<Unit filename="src/Hecho.cpp" />
+		<Unit filename="src/MotorInferencia.cpp" />
+		<Unit filename="src/Regla.cpp" />
+		<Unit filename="src/Utils.cpp" />
+		<Unit filename="src/main.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

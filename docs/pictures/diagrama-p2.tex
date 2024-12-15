@@ -1,0 +1,70 @@
+
+\begin{tikzpicture}[
+    node distance=2cm and 2.25cm,
+    box/.style={draw, fill=gray!20, rounded corners, minimum height=1.2cm, minimum width=1.2cm, align=center},
+    line/.style={-Stealth, thick}
+]
+
+% Nodos principales
+\node[box] (R3) {$R_3$};
+\node[box, right=of R3, xshift=0cm] (R5) {$R_5$};
+\node[box, right=of R5, xshift=0cm] (R2) {$R_2$};
+\node[box, right=of R2, xshift=-1cm] (R1) {$R_1$};
+\node[box, right=of R1, xshift=0cm] (R4) {$R_4$};
+\node[box, right=of R4, xshift=0cm] (R6) {$R_6$};
+
+% Valores de FC junto a cada nodo
+\node[left=0cm of R2] {\small FC=$0.75$};
+\node[left=0cm of R3] {\small FC=$-0.4$};
+\node[left=0cm of R5] {\small FC=$-0.1$};
+
+\node[right=0cm of R1] {\small FC=$0.4$};
+\node[right=0cm of R4] {\small FC=$-0.55$};
+\node[right=0cm of R6] {\small FC=$-0.6$};
+
+\node[below right=0.25cm and -0.65cm of R3] {\small \textcolor{darkgreen}{$-0.26$}};
+\node[below left=0.25cm and -0.5cm of R5] {\small \textcolor{darkgreen}{$-0.1$}};
+\node[below left=0.25cm and +1cm of R2] {\small \textcolor{darkgreen}{$0.75$}};
+\node[below right=0.25cm and +1cm of R1] {\small \textcolor{darkgreen}{$0.4$}};
+\node[below right=0.25cm and -0.5cm of R4] {\small \textcolor{darkgreen}{$-0.1925$}};
+\node[below left=0.25cm and -0.65cm of R6] {\small \textcolor{darkgreen}{$-0.6$}};
+
+
+% Inputs
+\node[above=1.5cm of R5, align=center, xshift=-1.1cm] (les2pivRM) {1\\[0.5ex] les2pivRM};
+\node[above=1.6cm of R5, align=center, xshift=1.1cm] (visitanteRM) {1\\[0.5ex] visitanteRM};
+\node[above=1.5cm of R3, align=center] (publicoMayEst) {0.65\\[0.5ex] publicoMayEst};
+
+
+\node[above=1.5cm of R2, align=center, xshift=1.25cm] (arbMod) {1\\[0.5ex] arbMod};
+
+\node[above=1.5cm of R4, align=center] (publicoEqui) {0.35\\[0.5ex] publicoEqui};
+\node[above=1.5cm of R6, align=center] (les2pivEST) {1\\[0.5ex] les2pivEST};
+
+% Output
+\node[below=2cm of R5] (ganaRM) {ganaRM};
+\node[below=2cm of R4] (ganaEST) {ganaEST};
+
+\node[right=0.25cm of ganaRM, yshift=-0.15cm] {\small \textcolor{darkred}{$0.6246$}};
+\node[right=0.25cm of ganaEST, yshift=-0.15cm] {\small \textcolor{darkred}{$-0.461666$}};
+\node[above=0.25cm of R5] {\small \textcolor{darkgreen}{$1$}};
+\draw[black] (R5) ++(0.85cm, 1.25cm) arc[start angle=45, end angle=135, radius=1.2cm];
+
+% Flechas
+\draw[line] (arbMod) -- (R2);
+\draw[line] (arbMod) -- (R1);
+\draw[line] (publicoMayEst) -- (R3);
+\draw[line] (les2pivRM) -- (R5);
+\draw[line] (visitanteRM) -- (R5);
+\draw[line] (R2) -- (ganaRM);
+\draw[line] (R3) -- (ganaRM);
+\draw[line] (R5) -- (ganaRM);
+
+\draw[line] (publicoEqui) -- (R4);
+\draw[line] (les2pivEST) -- (R6);
+\draw[line] (R1) -- (ganaEST);
+\draw[line] (R4) -- (ganaEST);
+\draw[line] (R6) -- (ganaEST);
+
+\end{tikzpicture}
+

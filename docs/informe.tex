@@ -1,0 +1,701 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Prácticas Sistemas Inteligentes
+%
+% Author:
+% Hugo Sánchez
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper,11pt, includehead]{article}
+\include{style} % import style and config
+
+\begin{document}
+
+\title{
+	\vspace{-5ex}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=72mm]{\pictures logo}
+	\end{figure}
+		
+	{\Large \textsc{\university}}\\
+	{\Large Facultad de Informática}\\ [12.5ex]
+	{\Large \textsc{Práctica II de SSII}\\ [1ex]}
+	{\Huge Sistemas Basados en Reglas}\\ [1ex]
+	{\Large \textsc{3º de Grado en Ingeniería Informática}}\\ [3ex]
+	{\Large \textsc{Curso 2024/2025}}
+	\vspace{15ex}
+}
+
+\author{
+	{\Large Hugo Sánchez Martínez}\\[0.5ex]
+	24450997L\\
+	\texttt{hugo.s.m@um.es}\\
+}
+
+\date{\vspace{-10ex}}
+\pagestyle{fancy}
+
+
+
+\renewcommand{\headrulewidth}{0.4pt}
+
+\fancyhf{} % clear existing header/footer
+\fancyhead[L]{H.Sánchez}
+\fancyhead[R]{\textit{SBR-FC: INFORME}}
+\fancyfoot[R]{\thepage}
+\setlength{\headsep}{4ex}
+
+
+
+\maketitle
+\thispagestyle{empty} % remove page number from title page
+\clearpage
+
+\thispagestyle{empty} % remove page number from ToC
+\tableofcontents
+\clearpage
+\setcounter{page}{1}
+
+\thispagestyle{plain}
+
+\hrule
+\vspace{-5ex}
+
+\begin{abstract}
+	\vspace{0.5ex}
+	Este documento recoge la realización de la segunda práctica de la asignatura de Sistemas Inteligentes del tercer curso del grado en Ingeniería Informática de la Universidad de Murcia. Dicha práctica consiste en el diseño y la construcción de un \textbf{Sistema Basado en Reglas} (\textbf{SBR}) con conocimiento sobre la incertidumbre expresado en \textbf{factores de certeza}.
+	\vspace{-0.5ex}
+\end{abstract}
+\hrule
+\vspace{4ex}
+
+\section{Diseño de un SBR con encadenamiento hacia atrás}
+\begin{center}
+	\begin{algorithm}[H]
+		\KwIn{Meta (hecho a probar), Base de Hechos (BH)} % Entradas del algoritmo
+		\KwResult{Factor de certeza (FC) de la meta} % Resultados del algoritmo
+		\medskip
+		
+		\tcp{Obtener el FC del hecho desde la BH}
+		$fc \leftarrow BH.getHecho(meta).getFC()$
+		
+		\If{$fc \geq -1$}{
+			\Return $fc$ \quad \tcp{Hecho conocido}
+		}
+		\medskip
+		
+		\Else{
+			\tcp{Buscar reglas cuyos consecuentes sean la meta}
+			$cjto\_reglas \leftarrow equiparar\_cons(meta)$
+			$fcMetas \leftarrow \emptyset$ \quad \tcp{Lista para almacenar FCs}
+			\medskip
+			
+			\While{$cjto\_reglas$ no está vacía}{
+				\tcp{Tomar y eliminar la primera regla}
+				$r \leftarrow cjto\_reglas.pop\_front()$
+				
+				$fc\_r \leftarrow r.getFC()$
+				\medskip
+				
+				\tcp{Extraer antecedentes y tipo de la regla}
+				$antecedentes, tipo \leftarrow extraerAntecedentesyTipo(r)$
+				
+				$fcNuevasMetas \leftarrow \emptyset$
+				\medskip
+				
+				\ForEach{$nMeta \in antecedentes$}{
+					\tcp{Calcular el FC de cada meta usando backward chaining}
+					$fc \leftarrow backward\_chaining(nMeta, BH)$
+					
+					$fcNuevasMetas.push\_back(fc)$
+				}
+				
+				\tcp{Calcular el FC combinado de los antecedentes}
+				$fcAntecedentesR \leftarrow calcularFCAnt(r, fcNuevasMetas, tipo)$
+				\medskip
+				
+				\tcp{Calcular el FC de la meta basado en la regla}
+				$fcMetaR \leftarrow calcularFCMetaR(meta, fcAntecedentesR, fc\_r)$
+				
+				$fcMetas.push\_back(fcMetaR)$
+			}
+			
+			\tcp{Combinar los FC de todas las reglas para la meta}
+			\If{$fcMetas.size() = 1$}{
+				$fcMeta \leftarrow fcMetas.front()$
+			}
+			\Else{
+				$fcMeta \leftarrow calcularFCcombinacion(meta, fcMetas)$
+			}
+			
+			\Return $fcMeta$
+		}
+		\caption{Backward Chaining}
+		\label{alg:backward_chaining}
+	\end{algorithm}
+\end{center}
+
+\clearpage
+
+El algoritmo ha sido diseñado en base al proporcionado en las diapositivas de la asignatura. Para soportar factores de certeza, añadimos la posibilidad de \textbf{calcular los FCs} de cada uno de los \textbf{antecedentes} de la meta de forma recursiva. Por último, para hallar el factor de certeza final de la meta, se \textbf{combinan} los factores de todas las reglas que actúan de antecesoras. Por otro lado, al analizar las nuevas metas, no se comprueba si esta está verificada, pues existe \textbf{incertidumbre}. Toda la implementación viene comentada en el código fuente del proyecto.
+
+\section{Pruebas}
+\subsection{Prueba 1}
+Para la primera prueba, el guión proporciona tanto la formalización del problema como la red de inferencia. Para la verificación, veáse ??? .
+
+\subsection{Prueba 2}
+\subsubsection{Formalización}
+\noindent El guión proporciona la siguiente formalización válida para el problema:
+
+{\small 
+\begin{align*}
+	\sum = & \ \{localEST,\ visitanteRM,\ arbMod,\ publicoMayEST, \\
+	& \ publicoEqui,\ les2pivEST,\ les2pivRM,\ ganaEST,\ ganaRM \}
+\end{align*}}
+
+\noindent donde:\\[1ex]
+\indent - $localEST$ = \textquotedblleft El estudiantes es el equipo local\textquotedblright \\
+\indent - $visitanteRM$ = \textquotedblleft El Real Madrid es el equipo vistante\textquotedblright \\
+\indent - $arbMod$ = \textquotedblleft Los árbitros son moderados\textquotedblright \\
+\indent - $publicoMayEst$ = \textquotedblleft El público es mayoritariamente del Estudiantes\textquotedblright \\
+\indent - $publicoEqui$ = \textquotedblleft El público está equilibrado para los dos equipos\textquotedblright \\
+\indent - $les2pivEST$ = \textquotedblleft El Estudiantes tiene 2 pivots lesionados\textquotedblright \\
+\indent - $les2pivRM$ = \textquotedblleft El Real Madrid tiene 2 pivots lesionados\textquotedblright \\
+\indent - $ganaEST$ = \textquotedblleft El Estudiantes gana\textquotedblright \\
+\indent - $ganaRM$ = \textquotedblleft El Real Madrid gana\textquotedblright \\
+
+
+\subsubsection{Bases de hechos y bases del conocimiento}
+También se nos proporcionan las bases de hechos y las bases del conocimiento. Sin embargo, ahora contamos con \textbf{dos posibles objetivos}: que el Real Madrid gane el partido y, por tanto, la liga; o que lo haga el Estudiantes.
+
+\vspace{6ex}
+
+\noindent$
+\text{Bases de hechos} =
+\left\{ 
+\begin{array}{l}
+	\text{El Estudiantes es el equipo local},\quad FC (localEST)=1 \cr
+	\text{El Real Madrid es el equipo visitante},\quad FC (visitanteRM)=1 \cr
+	\text{Los árbitros son moderados},\quad FC (arbMod)=1 \cr
+	\text{El público es mayoritariamente del Estudiantes},\quad FC (publicoMayEST)=0.65 \cr
+	\text{El público está equilibrado},\quad FC (pupblicoEqui)=0.35 \cr
+	\text{El Estudiantes tiene 2 pivots lesionados},\quad FC (les2pivEST)=1 \cr
+	\text{El Real Madrid tiene 2 pivots lesionados},\quad FC (les2pivRM)=1 
+\end{array} 
+\right.
+$
+
+\vspace{6ex}
+
+\noindent$
+\text{Bases del conocimiento} =
+\left\{ 
+\begin{array}{l}
+	R_1: arbMod \rightarrow ganaEST, \quad FC = 0.4 \cr
+	R_2: arbMod \rightarrow ganaRM, \quad FC = 0.75 \cr
+	R_3: publicoMayEST \rightarrow ganaRM, \quad FC = -0.4 \cr
+	R_4: publicoEqui \rightarrow ganaEST, \quad FC = -0.55 \cr
+	R_5: les2pivRM \land visitanteRM \rightarrow ganaRM, \quad FC = -0.1 \cr
+	R_6: les2pivEST \rightarrow ganaEST, \quad FC = -0.6
+\end{array} 
+\right.
+$
+\vspace{4ex}
+\noindent Guardamos las BHs y las BCs en ficheros de texto para ser interpretados por el MI. Al tener dos objetivos, ahora necesitaremos 3 ficheros: 1 para la BH y 2 para las BCs (uno por objetivo).
+
+\vspace{3ex}
+
+\hrule
+\lstinputlisting[caption={Contenido de \texttt{BC-2.txt}}, basicstyle=\footnotesize \ttfamily, numbers=left, numbersep=15pt, xleftmargin=25pt]{\pruebas /prueba2/BC-2.txt}
+\hrule
+
+\vspace{5ex}
+
+\noindent
+\begin{minipage}[t]{0.45\textwidth}
+	\hrule
+	\lstinputlisting[caption={Contenido de \texttt{BH-2-ganaRM.txt}}, basicstyle=\footnotesize \ttfamily, numbers=left, numbersep=15pt, xleftmargin=25pt]{\pruebas /prueba2/BH-2-ganaRM.txt}
+	\hrule
+\end{minipage}%
+\hspace{0.10\textwidth} % Espacio horizontal entre las columnas
+\begin{minipage}[t]{0.45\textwidth}
+	\hrule
+	\lstinputlisting[caption={Contenido de \texttt{BH-2-ganaEST.txt}}, basicstyle=\footnotesize \ttfamily, numbers=left, numbersep=15pt, xleftmargin=25pt]{\pruebas /prueba2/BH-2-ganaEST.txt}
+	\hrule
+\end{minipage}
+
+\vspace{3ex}
+
+\subsubsection{Construcción del motor de inferencia}
+\noindent Fijamos los objetivos de nuestro problema y calculamos sus respectivos factores de certeza:
+
+$$Objetivos=\{ganaRM,\ ganaEST\}$$
+$$Metas=\{ganaRM,\ ganaEST\}$$
+
+
+\begin{itemize}[left=0pt]
+	\item Cálculo $FC(ganaRM)$\\[2ex]
+	- Propagación por $R_3$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(ganaRM_{R_3})=FC(R_3)\times max\{0,FC(publicoMayEST)\}&=-0.4\times max\{0,0.65\}&&\\
+		&=-0.4\times 0.65=-0.26&& \\[-5ex]
+	\end{flalign*} 
+	- Propagación por $R_5$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 1 ($\land$):}\quad FC(les2pivRM\land visitanteRM)&=min\{FC(les2pivRM),FC(visitanteRM)\}&&\\
+		&=min\{1,1\}=1&& \\[-5ex]
+	\end{flalign*}
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(ganaRM_{R_5})&=FC(R_5)\times max\{0,FC(les2pivRM\land visitanteRM)\}&&\\
+		&=-0.1\times max\{0,0.65\}=-0.1\times 1=-0.1 && \\[-5ex]
+	\end{flalign*}
+	- Propagación por $R_2$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(ganaRM_{R_2})=FC(R_2)\times max\{0,FC(arbMod)\}&=0.75\times max\{0,1\}&&\\
+		&=0.75\times 1=0.75&& \\[-5ex]
+	\end{flalign*}
+	
+	- Acumulación por $R_3$, $R_5$ y $R_2$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 2:}\quad FC(ganaRM_{R_3,R_5})&=FC(ganaRM_{R_3})+FC(ganaRM_{R_5})\times (1+FC(gamaRM_{R_3}))&&\\
+		&=-0.26+(-0.1)\times (1+(-0.26))=-0.26+(-0.1)\times 0.74=-0.334&& \\[-5ex]
+	\end{flalign*}
+	\begin{flalign*}
+		\quad \text{Caso 2:}\quad FC(ganaRM_{R_3,R_5,R_2})&=\dfrac{FC(ganaRM_{R_3,R_5})+FC(ganaRM_{R_2})}{1-min\{|FC(ganaRM_{R_3,R_5})|, |FC(ganaRM_{R_2})|\}}&&\\
+		&=\dfrac{-0.334+0.75}{1-min\{0.334, 0.75\}}=\dfrac{0.416}{1-0.334}=0.6246&& \\[-5ex]
+	\end{flalign*}
+	
+	\item Cálculo $FC(ganaEST)$\\[2ex]
+	- Propagación por $R_1$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(ganaEST_{R_1}=FC(R_1)\times max\{0,FC(arbMod)\}=0.4\times max\{0,1\}=0.4\times 1=0.4&& \\[-5ex]
+	\end{flalign*}
+	- Propagación por $R_4$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(ganaEST_{R_4}=FC(R_4)\times max\{0,FC(publicoEqui)\}&=-0.55\times max\{0,0.35\}&&\\
+		&=-0.55\times 0.35=-0.1925&& \\[-5ex]
+	\end{flalign*}
+	- Propagación por $R_6$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(ganaEST_{R_6}=FC(R_6)\times max\{0,FC(les2pivEST)\}&=-0.6\times max\{0,1\}&&\\
+		&=-0.6\times 1=-0.6&& \\[-5ex]
+	\end{flalign*}
+	- Acumulación por $R_1$, $R_4$ y $R_6$.\\
+	\vspace{-2ex}
+	\begin{flalign*}
+		\quad \text{Caso 2:}\quad FC(ganaEST_{R_1,R_4})&=\dfrac{FC(ganaEST_{R_1})+FC(ganaEST_{R_4})}{1-min\{|FC(ganaEST_{R_1})|, |FC(ganaEST_{R_4})|\}}&&\\
+		&=\dfrac{0.4+(-0.1925)}{1-min\{0.4, 0.1925\}}=\dfrac{0.2075}{1-0.1925}=\dfrac{0.2075}{0.8075}=0.256966&& \\[-5ex]
+	\end{flalign*}
+	\begin{flalign*}
+		\quad \text{Caso 2:}\quad FC(ganaEST_{R_1,R_4,R_6})&=\dfrac{FC(ganaEST_{R_1,R_4})+FC(ganaEST_{R_6})}{1-min\{|FC(ganaEST_{R_1,R_4})|, |FC(ganaEST_{R_6})|\}}&&\\
+		&=\dfrac{0.256966+(-0.6)}{1-min\{0.256966, 0.6\}}=\dfrac{-0.343034}{0.743034}=-0.461666&& \\[-5ex]
+	\end{flalign*}
+\end{itemize}
+
+\noindent Dibujamos el diagrama de la red de inferencia:\\
+\begin{center}
+	\resizebox{\textwidth}{!}{\input{pictures/diagrama-p2.tex}}
+\end{center}
+
+\clearpage
+
+\subsection{Prueba 3}
+\subsubsection{Formalización}
+A diferencia de la prueba anterior, debemos realizar la formalización para construir nuestro SBR. Una posible formalización es la siguiente:
+
+{\small $$\sum=\{exp2o3,\ expMas3,\ cond2o3,\ condMas3,\ condExp,\ noSolo,\ cansado,\ joven,\ alcohol,\ causaAcc\}$$}
+
+\noindent donde:\\[1ex]
+\indent - $exp2o3$ = \textquotedblleft El conductor tiene una experiencia entre 2 y 3 años al volante\textquotedblright \\
+\indent - $expMas3$ = \textquotedblleft El conductor tiene más de 3 años de experiencia al volante\textquotedblright \\
+\indent - $cond2o3$ = \textquotedblleft El conductor conduce entre 2 y 3 horas\textquotedblright \\
+\indent - $condMas3$ = \textquotedblleft El conductor conduce por más de 3 horas\textquotedblright \\
+\indent - $condExp$ = \textquotedblleft El conductor es un conductor experimentado\textquotedblright \\
+\indent - $noSolo$ = \textquotedblleft El conductor no va solo en el coche\textquotedblright \\
+\indent - $cansado$ = \textquotedblleft El conductor está cansado\textquotedblright \\
+\indent - $joven$ = \textquotedblleft El conductor es joven\textquotedblright \\
+\indent - $alcohol$ = \textquotedblleft El conductor ha tomado alcohol\textquotedblright \\
+\indent - $causaAcc$ = \textquotedblleft El conductor es el causante del accidente\textquotedblright \\
+
+\subsubsection{Bases de hechos y bases del conocimiento}
+Diseñamos nuestro conjunto de reglas en base al enunciado del problema. Esta vez, podemos concretarlo a una sóla meta: el conductor es el causante del accidente ($causaAcc$).
+
+\vspace{4ex}
+
+\noindent$
+\text{Bases de hechos} =
+\left\{ 
+\begin{array}{l}
+	\text{El conductor tiene 4 años de antigüedad de carnet},\quad FC (expMas3)=1 \cr
+	\text{El conductor ha conducido entre 2 y 3 horas},\quad FC (cond2o3)=1 \cr
+	\text{El conductor viajaba solo},\quad FC (noSolo)=-1 \cr
+	\text{El conductor es joven con un factor de certeza del 0.4},\quad FC (joven)=0.4
+\end{array} 
+\right.
+$
+
+\vspace{4ex}
+
+\noindent$
+\text{Bases del conocimiento} =
+\left\{ 
+\begin{array}{l}
+	R_1: exp2o3 \rightarrow condExp, \quad FC = 0.5 \cr
+	R_2: expMas3 \rightarrow condExp, \quad FC = 0.9 \cr
+	R_3: cond2o3 \rightarrow cansado, \quad FC = 0.5 \cr
+	R_4: condMas3 \rightarrow cansado, \quad FC = 1 \cr
+	R_5: condExp \land noSolo \rightarrow causaAcc, \quad FC = -0.5 \cr
+	R_6: cansado \rightarrow causaAcc, \quad FC = 0.5 \cr
+	R_7: joven \lor alcohol \rightarrow causaAcc, \quad FC = 0.7
+\end{array} 
+\right.
+$
+
+\vspace{5ex}
+
+\hrule
+\lstinputlisting[caption={Contenido de \texttt{BC-3.txt}}, basicstyle=\small \ttfamily]{\pruebas /prueba3/BC-3.txt}
+\hrule
+
+\clearpage
+
+\hrule
+\lstinputlisting[caption={Contenido de \texttt{BH-3-causaAcc.txt}}, basicstyle=\small \ttfamily]{\pruebas /prueba3/BH-3-causaAcc.txt}
+\hrule
+
+\vspace{4ex}
+
+\subsubsection{Construcción del motor de inferencia}
+\noindent Fijamos la meta de nuestro problema y calculamos sus factores de certeza:
+
+$$Objetivos=\{condExp,\ cansado,\ causaAcc\}$$
+$$Metas=\{causaAcc\}$$
+
+\begin{itemize}[left=0pt]
+	\item Cálculo $FC(condExp)$\\[2ex]
+	- Propagación por $R_1$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(condExp_{R_1})=FC(R_1)\times max\{0,FC(exp2o3)\}=0.5\times max\{0,-1\}=0.5\times 0=0&& \\[-5ex]
+	\end{flalign*} 
+	- Propagación por $R_2$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(condExp_{R_2})=FC(R_2)\times max\{0,FC(expMas3)\}&=0.9\times max\{0,1\}&&\\
+		&=0.9\times 1=0.9&& \\[-5ex]
+	\end{flalign*}
+	- Acumulación por $R_1$ y $R_2$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 2:}\quad FC(condExp_{R_1,R_2})&=FC(condExp_{R_1})+FC(condExp_{R_2})\times (1-FC(condExp_{R_1}))&&\\
+		&=0+0.9\times (1-0)=0.9\times 1=0.9&& \\[-5ex]
+	\end{flalign*}
+	\item Cálculo $FC(cansado)$\\[2ex]
+	- Propagación por $R_3$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(cansado_{R_3})=FC(R_3)\times max\{0,FC(cond2o3)\}=0.5\times max\{0,1\}=0.5\times 1=0.5&& \\[-5ex]
+	\end{flalign*}
+	- Propagación por $R_3$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(cansado_{R_3})=FC(R_3)\times max\{0,FC(cond2o3)\}=0.5\times max\{0,1\}=0.5\times 1=0.5&& \\[-5ex]
+	\end{flalign*} 
+	- Propagación por $R_4$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(cansado_{R_4})=FC(R_4)\times max\{0,FC(condMas3)\}=1\times max\{0,-1\}=1\times 0=0&& \\[-5ex]
+	\end{flalign*} 
+	- Acumulación por $R_3$ y $R_4$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 2:}\quad FC(cansado_{R_3,R_4})&=FC(cansado_{R_3})+FC(cansado_{R_4})\times (1-FC(ccansado_{R_3}))&&\\
+		&=0.5+0\times (1-0.5)=0.5+0\times 0.5=0.5&& \\[-5ex]
+	\end{flalign*}
+	\item Cálculo $FC(causaAcc)$\\[2ex]
+	- Propagación por $R_5$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 1 ($\land$):}\quad FC(condexp\land noSolo)=min\{FC(condExp),FC(noSolo)\}=min\{0.9,-1\}=-1&& \\[-5ex]
+	\end{flalign*} 
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(causaAcc_{R_5})=FC(R_5)\times max\{0,FC(condexp\land noSolo)\}&=-0.5\times max\{0,-1\}&&\\
+		&=-0.5\times 0=0&& \\[-5ex]
+	\end{flalign*} 
+	- Propagación por $R_6$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(causaAcc_{R_6})=FC(R_6)\times max\{0,FC(cansado)\}&=0.5\times max\{0,0.5\}&&\\
+		&=0.5\times 0.5=0.25&& \\[-5ex]
+	\end{flalign*}
+	- Propagación por $R_7$.\\	
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 1 ($\lor$):}\quad FC(joven\lor alcohol)=max\{FC(joven),FC(alcohol)\}=max\{0.4,0\}=0.4&& \\[-5ex]
+	\end{flalign*} 
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(causaAcc_{R_7})=FC(R_7)\times max\{0,FC(joven\lor alcohol)\}&=0.7\times max\{0,0.4\}&&\\
+		&=0.7\times 0.4=0.28&& \\[-5ex]
+	\end{flalign*} 
+	- Acumulación por $R_5$, $R_6$ y $R_7$.\\
+	\vspace{-2ex}
+	\begin{flalign*}
+		\quad \text{Caso 2:}\quad FC(causaAcc_{R_5,R_6})&=FC(causaAcc_{R_5})+FC(causaAcc_{R_6})\times (1-FC(causaAcc_{R_5}))&&\\
+		&=0+0.25\times (1-0)=0.25\times 1=0.25&& \\[-5ex]
+	\end{flalign*}
+	\begin{flalign*}
+		\quad \text{Caso 2:}\quad FC(causaAcc_{R_5,R_6,R_7})&=FC(causaAcc_{R_5,R_6})+FC(causaAcc_{R_7})\times (1-FC(causaAcc_{R_5,R_6}))&&\\
+		&=0.25+0.28\times (1-0.25)=0.25+0.28\times 0.75=0.25+0.21=0.46&& \\[-5ex]
+	\end{flalign*}
+\end{itemize}
+
+\vspace{3ex}
+
+\noindent Dibujamos el diagrama de la red de inferencia:\\
+\begin{center}
+	\resizebox{0.8\textwidth}{!}{\input{pictures/diagrama-p3.tex}}
+\end{center}
+
+\clearpage
+
+\subsection{Prueba A}
+\subsubsection{Formalización}
+\noindent Debemos diseñar esta prueba desde cero. Definimos una formalización que se adapte a los requisitos:
+
+{\small 
+	\begin{align*}
+		\sum = & \ \{fiebre,\ tosSeca,\ somnolencia,\ dolorMusc, \\
+		& \ contEnf,\ faringitis,\ fatiga,\ gripe \}
+\end{align*}}
+
+\noindent donde:\\[1ex]
+\indent - $fiebre$ = \textquotedblleft El paciente tiene fiebre\textquotedblright \\
+\indent - $tosSeca$ = \textquotedblleft El paciente tiene tos seca\textquotedblright \\
+\indent - $somnolencia$ = \textquotedblleft El paciente presenta somnolencia\textquotedblright \\
+\indent - $dolorMusc$ = \textquotedblleft El paciente tiene dolor muscular\textquotedblright \\
+\indent - $contEnf$ = \textquotedblleft El paciente tuvo contacto reciente con una persona enferma\textquotedblright \\
+\indent - $faringitis$ = \textquotedblleft El paciente tiene inflamación de la faringe (faringitis)\textquotedblright \\
+\indent - $fatiga$ = \textquotedblleft El paciente experimenta fatiga extrema\textquotedblright \\
+\indent - $gripe$ = \textquotedblleft El paciente tiene gripe\textquotedblright \\
+
+\subsubsection{Bases de hechos y bases del conocimiento}
+Diseñamos nuestro conjunto de reglas en base al enunciado del problema. Nuestra única meta es $gripe$.
+
+\vspace{4ex}
+
+\noindent$
+\text{Bases de hechos} =
+\left\{ 
+\begin{array}{l}
+	\text{El paciente tiene fiebre alta},\quad FC (fiebre)=0.6 \cr
+	\text{El paciente no tiene la tos seca},\quad FC (tosSeca)=-1 \cr
+	\text{El paciente sufre epidosidos de somnolencia con frecuencia},\quad FC (somnolencia)=1 \cr
+	\text{El paciente sufre dolor muscular en ciertas partes},\quad FC (dolorMusc)=0.5 \cr
+	\text{El paciente no ha tenido contacto con ningún enferno},\quad FC (contEnf)=-1
+\end{array} 
+\right.
+$
+
+\vspace{4ex}
+
+\noindent$
+\text{Bases del conocimiento} =
+\left\{ 
+\begin{array}{l}
+	R_1: fiebre \land tosSeca \rightarrow faringitis, \quad FC = 0.99 \cr
+	R_2: faringitis \lor contEnf \rightarrow gripe, \quad FC = 0.75 \cr
+	R_3: somnolencia \rightarrow fatiga, \quad FC = 0.7 \cr
+	R_4: dolorMusc \rightarrow fatiga, \quad FC = 0.5 \cr
+	R_5: fatiga \rightarrow gripe, \quad FC = 0.3 
+\end{array} 
+\right.
+$
+
+\vspace{10ex}
+
+\hrule
+\lstinputlisting[caption={Contenido de \texttt{BC-A.txt}}, basicstyle=\small \ttfamily]{\pruebas /pruebaA/BC-A.txt}
+\hrule
+
+\clearpage
+
+\hrule
+\lstinputlisting[caption={Contenido de \texttt{BH-A-gripe.txt}}, basicstyle=\small \ttfamily]{\pruebas /pruebaA/BH-A-gripe.txt}
+\hrule
+
+\vspace{3ex}
+
+
+\subsubsection{Construcción del motor de inferencia}
+\noindent Fijamos la meta de nuestro problema y calculamos sus factores de certeza:
+
+$$Objetivos=\{faringitis,\ fatiga,\ gripe\}$$
+$$Metas=\{gripe\}$$
+
+\begin{itemize}[left=0pt]
+	\item Cálculo $FC(faringitis)$\\[2ex]
+	- Propagación por $R_1$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 1 ($\land$):}\quad FC(fiebre\land tosSeca)=min\{FC(fiebre),FC(tosSeca)\}=min\{0.6,-1\}=-1&& \\[-5ex]
+	\end{flalign*} 
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(faringitis_{R_1})=FC(R_1)\times max\{0,FC(fiebre\land tosSeca)\}&=0.99\times max\{0,-1\}&&\\
+		&=0.99\times 0=0&& \\[-5ex]
+	\end{flalign*} 
+	\item Cálculo $FC(fatiga)$\\[2ex]
+	- Propagación por $R_3$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(fatiga_{R_3})=FC(R_3)\times max\{0,FC(somnolencia)\}=0.7\times max\{0, 1\}=0.7&& \\[-5ex]
+	\end{flalign*}
+	- Propagación por $R_4$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(fatiga_{R_4})=FC(R_4)\times max\{0,FC(dolorMusc)\}=0.5\times max\{0, 0.5\}=0.25&& \\[-5ex]
+	\end{flalign*}
+	- Acumulación por $R_3, R_4$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 2:}\quad FC(fatiga_{R_3,R_4})&=FC(fatiga_{R_3})+FC(fatiga_{R_4})\times (1-FC(fatiga_{R_3}))&&\\
+		&=0.7+0.25\times (1-0.7)=0.7+0.25\times 0.3=0.775&& \\[-5ex]
+	\end{flalign*}
+	\item Cálculo $FC(gripe)$\\[2ex]
+	- Propagación por $R_2$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 1 ($\lor$):}\quad FC(faringitis\lor contEnf)=max\{FC(faringitis),FC(contEnf)\}=max\{0,-1\}=0&& \\[-5ex]
+	\end{flalign*} 
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(gripe_{R_2})=FC(R_2)\times max\{0,FC(faringitis\lor contEnf)\}&=0.75\times max\{0,0\}=0&& \\[-5ex]
+	\end{flalign*}
+	- Propagación por $R_5$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(gripe_{R_5})=FC(R_5)\times max\{0,FC(fatiga)\}&=0.3\times max\{0.775\}=0.2325&& \\[-5ex]
+	\end{flalign*}
+	- Acumulación por $R_2,R_5$.\\
+	\vspace{-3ex}
+	\begin{flalign*}
+		\quad \text{Caso 3:}\quad FC(gripe_{R_2,R_5})&=FC(gripe_{R_2})+FC(gripe_{R_5})\times (1-FC(fatiga_{R_2}))&&\\
+		&=0+0.2325\times (1-0)=0.2325&& \\[-5ex]
+	\end{flalign*} 
+\end{itemize}
+
+\noindent Dibujamos el diagrama de la red de inferencia:\\
+\begin{center}
+	\resizebox{0.7\textwidth}{!}{\input{pictures/diagrama-pA.tex}}
+\end{center}
+\clearpage
+
+\section{Ejecuciones}
+\noindent Esta sección muestra los comandos ejecutados y la salida para cada una de las pruebas de la práctica.
+\subsection{Prueba 1}
+\vspace{2ex}
+\begin{center}
+	\begin{tcolorbox}[simplecmd]
+		>\ sbr-fc.exe -bc BC-1.txt -bh BH-1.txt
+	\end{tcolorbox}
+\end{center}
+
+\noindent
+\begin{center}
+	\begin{minipage}[t]{0.55\textwidth}
+		\lstinputlisting[caption={Contenido de \texttt{Prueba1-out.txt}}, basicstyle=\footnotesize \ttfamily]{\pruebas /prueba1/Prueba1-out.txt}
+	\end{minipage}%
+\end{center}
+
+\clearpage
+
+\subsection{Prueba 2}
+$$Meta=\{ganaRM\}$$
+\begin{center}
+	\begin{tcolorbox}[simplecmd]
+		>\ sbr-fc.exe -bc B2-2.txt -bh BH-2-ganaRM.txt
+	\end{tcolorbox}
+\end{center}
+
+\noindent
+\begin{center}
+	\begin{minipage}[t]{0.55\textwidth}
+		\lstinputlisting[caption={Contenido de \texttt{Prueba2-ganaRM-out.txt}}, basicstyle=\footnotesize \ttfamily]{\pruebas /prueba2/Prueba2-ganaRM-out.txt}
+	\end{minipage}%
+\end{center}
+
+\clearpage
+$$Meta=\{ganaEST\}$$
+\begin{center}
+	\begin{tcolorbox}[simplecmd]
+		>\ sbr-fc.exe -bc BC-2.txt -bh BH-2-ganaEST.txt
+	\end{tcolorbox}
+\end{center}
+\noindent
+\begin{center}
+	\begin{minipage}[t]{0.55\textwidth}
+		\lstinputlisting[caption={Contenido de \texttt{Prueba2-ganaEST-out.txt}}, basicstyle=\footnotesize \ttfamily]{\pruebas /prueba2/Prueba2-ganaEST-out.txt}
+	\end{minipage}%
+\end{center}
+\clearpage
+
+\subsection{Prueba 3}
+$$Meta=\{causaAcc\}$$
+\begin{center}
+	\begin{tcolorbox}[simplecmd]
+		>\ sbr-fc.exe -bc BC-3.txt -bh BH-3-causaAcc.txt
+	\end{tcolorbox}
+\end{center}
+\noindent
+\begin{center}
+	\begin{minipage}[t]{0.55\textwidth}
+		\lstinputlisting[caption={Contenido de \texttt{Prueba3-causaAcc-out.txt}}, basicstyle=\footnotesize \ttfamily]{\pruebas /prueba3/Prueba3-causaAcc-out.txt}
+	\end{minipage}%
+\end{center}
+\clearpage
+
+\subsection{Prueba A}
+$$Meta=\{gripe\}$$
+\begin{center}
+	\begin{tcolorbox}[simplecmd]
+		>\ sbr-fc.exe -bc BC-A.txt -bh BH-A-gripe.txt
+	\end{tcolorbox}
+\end{center}
+\noindent
+\begin{center}
+	\begin{minipage}[t]{0.55\textwidth}
+		\lstinputlisting[caption={Contenido de \texttt{PruebaA-gripe-out.txt}}, basicstyle=\footnotesize \ttfamily]{\pruebas /pruebaA/PruebaA-gripe-out.txt}
+	\end{minipage}%
+\end{center}
+
+\section{Distribución del trabajo}
+\begin{table}[h!]
+	\centering
+	\renewcommand{\arraystretch}{1.20} % Mejorar espacio tablas
+	\begin{tabular}{|c|c|}
+		\hline
+		\textbf{Actividad} & \textbf{Tiempo (horas)}\\
+		\hline
+		\textit{Diseño} & 7 \\
+		\hline
+		\textit{Cuestiones} & 2 \\
+		\hline
+		\textit{Documentación} & 12 \\
+		\hline
+		\textbf{Total} & 21 horas \\
+		\hline
+	\end{tabular}
+	\caption{Distribución de horas}
+\end{table}
+
+\section{Cuestiones}
+\noindent Veáse el documento \texttt{cuestiones.pdf}.
+
+\end{document}
+

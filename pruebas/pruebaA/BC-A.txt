@@ -1,0 +1,6 @@
+5
+R1: Si fiebre y tosSeca Entonces faringitis, FC=0.99
+R2: Si faringitis o contEnf Entonces gripe, FC=0.75
+R3: Si somnolencia Entonces fatiga, FC=0.7
+R4: Si dolorMusc Entonces fatiga, FC=0.5
+R5: Si fatiga Entonces gripe, FC=0.3

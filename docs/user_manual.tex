@@ -1,0 +1,88 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Prácticas Sistemas Inteligentes
+%
+% Author:
+% Hugo Sánchez
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper,11pt, includehead]{article}
+\include{style} % import style and config
+\renewcommand{\headrulewidth}{0.4pt} % no header rule
+
+\title{
+	\vspace{-5ex}
+	{\large \textsc{\subject}}\\[1ex]
+	\hrule
+	\vspace{3ex}
+	{\huge \textsc{\underline{Sistemas Basados en Reglas:}}}\\
+	{\huge \textsc{\underline{Manual de Usuario}}}\\[2ex]
+	{\small Hugo Sánchez Martínez\\[-2ex]
+	\texttt{hugo.s.m@um.es}} % Author and email address
+	
+	\vspace{2ex}
+	\hrule
+	\vspace{2ex}
+	{\normalsize \textsc{Facultad de Informática - Universidad de Murcia}\\[-1ex] Diciembre 2024}
+	}
+
+\date{} % University, school and/or department name(s) and a date
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+	
+\maketitle % Print the title
+
+\pagestyle{fancy}
+
+\fancyhf{} % clear existing header/footer
+\fancyhead[L]{Hugo Sánchez Martínez}
+\fancyhead[R]{SBR: Cuestiones}
+\fancyfoot[R]{\thepage}
+\setlength{\headsep}{4ex}
+
+\setcounter{page}{1}
+
+\vspace{-3ex}
+
+\noindent {\LARGE \textbf{1.- Estructura}}\\
+
+\noindent El proyecto sigue la siguiente estructura de directorios y ficheros:
+
+\begin{verbatim}
+  sbr-fc/
+  ├── bin/            # Ejecutable
+  ├── src/            # Codigo fuente del proyecto
+  ├── include/        # Archivos de cabecera adicionales
+  ├── pruebas/        # Pruebas de la práctica
+  ├── main.cpp        # Archivo principal
+  └── docs/           # Documentación del proyecto
+\end{verbatim}
+
+Los archivos necesarios para la generación del ejecutable se encuentran en los directorios \texttt{src/}, \texttt{include/} y el fichero \texttt{main.cpp}.
+
+\vspace{4ex}
+
+\noindent {\LARGE \textbf{2.- Compilación}}\\
+
+Cumpliendo los los requisitos de la práctica, el proyecto está realizado en torno al \textbf{IDE Codeblocks} (17.12). Entre los archivos, se incluye un fichero \textit{Code Blocks Proyect} (\texttt{.cbp}), para importar al IDE el proyecto. Para generar el ejecutable, se recomienda usar la opción \textbf{Rebuild} de Code Blocks. El directorio de destino por defecto es \texttt{bin/}.
+
+\begin{mdframed}[style=warning]
+	En algunos casos, será necesario añadir el directorio \texttt{include/} a la lista de directorios en los que debe \textbf{buscar el compilador}. Pasos: Proyecto >\ Build Options >\ Search directories >\ Añadir la carpeta \texttt{include}.
+\end{mdframed}
+
+\vspace{4ex}
+
+\noindent {\LARGE \textbf{3.- Ejecución}}\\
+
+\noindent Para usar el ejecutable, ejecutamos el siguiente comando:
+
+\begin{verbatim}
+          > sbr-fc.exe -bc [BASE CONOCIMIENTO] -bh [BASE HECHOS]
+\end{verbatim}
+
+Donde \texttt{BASE CONOCIMIENTO} y \texttt{BASE HECHOS} son los \textbf{ficheros de la prueba} a ejecutar. Una copia de todos estos ficheros \textbf{se ha incluido en el directorio} destino del ejecutable para simplificar la ejecución.
+
+
+\end{document}
+

@@ -1,0 +1,91 @@
+
+\begin{tikzpicture}[
+	node distance=2cm and 2cm,
+	box/.style={draw, fill=gray!20, rounded corners, minimum height=1.2cm, minimum width=1.2cm, align=center},
+	line/.style={-Stealth, thick}
+]
+	
+% Nodos principales
+\node[box] (R1) {$R_1$};
+\node[box, right=of R1, xshift=0cm] (R2) {$R_2$};
+
+
+% Output
+\node[below=of R1] (condExp) at ($(R1)!0.5!(R2)$) {condExp};
+
+% Inputs
+\node[above=1.5cm of R1, align=center] (exp2o3) {-1\\[0.5ex] exp2o3};
+\node[above=1.5cm of R2, align=center] (expMas3) {1\\[0.5ex] expMas3};
+
+\node[right=of condExp, xshift=-0.25cm, align=center] (noSolo) {noSolo};
+\node[above=0.1cm of noSolo, align=center] () {-1};
+
+% Flechas
+
+
+
+\node[box, below=of condExp] (R5) at ($(condExp)!0.5!(noSolo)$) {$R_5$};
+\node[box, right=of R5, xshift=1.5cm] (R6) {$R_6$};
+\node[above=of R6] (cansado) {cansado};
+\node[box, above=of cansado, xshift=-1.5cm] (R3) {$R_3$};
+\node[box, above=of cansado, xshift=1.5cm] (R4) {$R_4$};
+\node[box, right=of R6, xshift=1.5cm] (R7) {$R_7$};
+\node[below=of R6, xshift=0cm] (causaAcc) {causaAcc};
+\node[above=1.5cm of R7, xshift=-1cm, align=center] (joven) {0.4\\[0.5ex] joven};
+\node[above=1.55cm of R7, xshift=1cm, align=center] (alcohol) {0\\[0.5ex] alcohol};
+\node[right=0cm of R5] {\small FC=$-0.5$};
+\node[right=0cm of R6] {\small FC=$0.5$};
+\node[right=0cm of R7] {\small FC=$0.7$};
+\node[above=1.5cm of R3, align=center] (cond2o3) {1\\[0.5ex] cond2o3};
+\node[above=1.5cm of R4, align=center] (condMas3) {-1\\[0.5ex] condMas3};
+
+
+\node[below=0.25cm of condExp, xshift=-0.15cm] {\small \textcolor{darkgreen}{$0.9$}};
+\node[above=0.25cm of R5] {\small \textcolor{darkgreen}{$-1$}};
+\node[below=0.25cm of cansado, xshift=-0.5cm] {\small \textcolor{darkgreen}{$0.5$}};
+\node[below=0.25cm of R6, xshift=-0.5cm] {\small \textcolor{darkgreen}{$0.25$}};
+\node[above=0.25cm of R7] {\small \textcolor{darkgreen}{$0.4$}};
+\node[below=0.25cm of R7, xshift=-0.5cm] {\small \textcolor{darkgreen}{$0.28$}};
+\node[below=0.25cm of R5, xshift=0.5cm] {\small \textcolor{darkgreen}{$0$}};
+\node[right=0.25cm of causaAcc, yshift=-0.25cm] {\small \textcolor{darkred}{$0.46$}};
+
+% Valores de FC junto a cada nodo
+\node[right=0cm of R1] {\small FC=$0.5$};
+\node[right=0cm of R2] {\small FC=$0.9$};
+\node[right=0cm of R3] {\small FC=$0.5$};
+\node[right=0cm of R4] {\small FC=$1$};
+
+\node[below=0.25cm of R1, xshift=0.15cm] {\small \textcolor{darkgreen}{$0$}};
+\node[below=0.25cm of R2, xshift=-0.1cm] {\small \textcolor{darkgreen}{$0.9$}};
+\node[below=0.25cm of R3, xshift=0.1cm] {\small \textcolor{darkgreen}{$0.5$}};
+\node[below=0.25cm of R4, xshift=-0.15cm] {\small \textcolor{darkgreen}{$0$}};
+\draw[black] (R5) ++(1.05cm, 1.25cm) arc[start angle=45, end angle=135, radius=1.5cm];
+
+
+\draw[line] (exp2o3) -- (R1);
+\draw[line] (expMas3) -- (R2);
+\draw[line] (cond2o3) -- (R3);
+\draw[line] (condMas3) -- (R4);
+
+\draw[line] (R1) -- (condExp);
+\draw[line] (R2) -- (condExp);
+
+\draw[line] (condExp) -- (R5);
+\draw[line] (noSolo) -- (R5);
+\draw[line] (cansado) -- (R6);
+
+\draw[line] (joven) -- (R7);
+\draw[line] (alcohol) -- (R7);
+
+\draw[line] (R5) -- (causaAcc);
+\draw[line] (R6) -- (causaAcc);
+\draw[line] (R7) -- (causaAcc);
+
+\draw[line] (R3) -- (cansado);
+\draw[line] (R4) -- (cansado);
+
+
+
+
+\end{tikzpicture}
+

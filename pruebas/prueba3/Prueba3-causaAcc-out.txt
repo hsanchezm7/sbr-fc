@@ -1,0 +1,34 @@
+=============================================
+          SISTEMA BASADO EN REGLAS       
+=============================================
+
+Base de conocimiento:                BC-3.txt
+---------------------------------------------
+Base de hechos:             BH-3-causaAcc.txt
+---------------------------------------------
+Meta:                                causaAcc
+
+=============================================
+
+R1: 
+	Caso 3: condExp, FC=0
+R2: 
+	Caso 3: condExp, FC=0.9
+Caso 2: condExp, FC=0.9
+R5: 
+	Caso 1: condExp y noSolo, FC=-1
+	Caso 3: causaAcc, FC=0
+R3: 
+	Caso 3: cansado, FC=0.5
+R4: 
+	Caso 3: cansado, FC=0
+Caso 2: cansado, FC=0.5
+R6: 
+	Caso 3: causaAcc, FC=0.25
+R7: 
+	Caso 1: joven o alcohol, FC=0.4
+	Caso 3: causaAcc, FC=0.28
+Caso 2: causaAcc, FC=0.25
+Caso 2: causaAcc, FC=0.46
+
+causaAcc, FC=0.46

@@ -1,0 +1,10 @@
+7
+expMas3, FC=1
+cond2o3, FC=1
+noSolo, FC=-1
+joven, FC=0.4
+exp2o3, FC=-1
+condMas3, FC=-1
+alcohol, FC=0
+Objetivo
+causaAcc
